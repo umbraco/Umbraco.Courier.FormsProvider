@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Courier.FormsProvider", "Umbraco.Courier.FormsProvider\Umbraco.Courier.FormsProvider.csproj", "{B21A9FEB-7339-4612-8F47-D190B8C58558}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Courier.FormsTreeProvider", "Umbraco.Courier.FormsTreeProvider\Umbraco.Courier.FormsTreeProvider.csproj", "{B29174D1-E8EB-40FD-BE10-08823D16C9E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{B21A9FEB-7339-4612-8F47-D190B8C58558}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B21A9FEB-7339-4612-8F47-D190B8C58558}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B21A9FEB-7339-4612-8F47-D190B8C58558}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B29174D1-E8EB-40FD-BE10-08823D16C9E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B29174D1-E8EB-40FD-BE10-08823D16C9E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B29174D1-E8EB-40FD-BE10-08823D16C9E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B29174D1-E8EB-40FD-BE10-08823D16C9E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

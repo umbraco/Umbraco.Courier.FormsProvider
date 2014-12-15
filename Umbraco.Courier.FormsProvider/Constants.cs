@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Umbraco.Courier.FormsProvider
 {
-    internal class Constants
+    public class Constants
     {
         public static Guid ProviderId = new Guid("562c63d0-9635-4276-9697-48dec50cdef4");
     }

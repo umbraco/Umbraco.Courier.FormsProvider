@@ -198,10 +198,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dependencies\Umbraco.Courier.RepositoryProviders.dll</HintPath>
     </Reference>
-    <Reference Include="Umbraco.Courier.UI, Version=1.2.1100.16491, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dependencies\Umbraco.Courier.UI.dll</HintPath>
-    </Reference>
     <Reference Include="umbraco.DataLayer, Version=1.0.5451.27168, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\UmbracoCms.Core.7.2.0\lib\umbraco.DataLayer.dll</HintPath>
@@ -239,7 +235,6 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Form.cs" />
     <Compile Include="FormItemProvider.cs" />
-    <Compile Include="FormTasks.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
