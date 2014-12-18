@@ -186,9 +186,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dependencies\Umbraco.Courier.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Umbraco.Courier.FormsProvider, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dependencies\Umbraco.Courier.FormsProvider.dll</HintPath>
+    <Reference Include="Umbraco.Courier.DataResolvers">
+      <HintPath>..\Dependencies\Umbraco.Courier.DataResolvers.dll</HintPath>
     </Reference>
     <Reference Include="Umbraco.Courier.Providers, Version=1.2.1100.16486, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -235,6 +234,8 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Form.cs" />
     <Compile Include="FormItemProvider.cs" />
+    <Compile Include="FormMacroResolver.cs" />
+    <Compile Include="FormPickerResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
