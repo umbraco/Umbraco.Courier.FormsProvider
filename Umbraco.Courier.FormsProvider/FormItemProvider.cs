@@ -240,10 +240,17 @@ namespace Umbraco.Courier.FormsProvider
                                 int id = 0;
                                 if (int.TryParse(settingValue, out id))
                                 {
-                                    var guid = ExecutionContext.DatabasePersistence.GetUniqueId(id);
-                                    if (guid != null)
+                                    var tuple = ExecutionContext.DatabasePersistence.GetUniqueIdWithType(id);
+                                    if (tuple != null)
                                     {
-                                        settingsMap[setting.Key] = guid.ToString();
+                                        //guid
+                                        var itemGuid = tuple.Item1.ToString();
+                                        var nodeObjectType = tuple.Item2;
+                                        var itemProvider = Umbraco.Courier.ItemProviders.NodeObjectTypes.GetCourierProviderFromNodeObjectType(nodeObjectType);
+                                        settingsMap[setting.Key] = itemGuid;
+                                        
+                                        if (itemProvider.HasValue)
+                                            item.Dependencies.Add(itemGuid, itemProvider.Value);
                                     }
                                 }
                             }
