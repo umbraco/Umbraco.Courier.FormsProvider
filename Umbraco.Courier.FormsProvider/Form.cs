@@ -23,5 +23,6 @@ namespace Umbraco.Courier.FormsProvider
 
         public SerializableDictionary<string, string> DataSourceSettings { get; set; }
         public Guid DataSourceId { get; set; }
+        public Guid GoToPageOnSubmitId { get; set; }
     }
 }

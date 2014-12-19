@@ -117,20 +117,26 @@ namespace Umbraco.Courier.FormsProvider
             }
 
 
-            //migrate field settings
-            if (umbracoform.FieldSettings.Count > 0)
+            //migrate field and form settings
+            using (var fs = new Umbraco.Forms.Data.Storage.FormStorage())
             {
-                using (var fs = new Umbraco.Forms.Data.Storage.FormStorage())
+                var form = fs.GetForm(Guid.Parse(umbracoform.ItemId.Id));
+                if (form != null)
                 {
-                    var form = fs.GetForm(Guid.Parse(umbracoform.ItemId.Id));
-                    if (form != null)
+                    //handle submit to node id
+                    if (umbracoform.GoToPageOnSubmitId != Guid.Empty)
+                        form.GoToPageOnSubmit = ExecutionContext.DatabasePersistence.GetNodeId(umbracoform.GoToPageOnSubmitId);
+           
+                    if (umbracoform.FieldSettings.Count > 0)
                     {
                         foreach (var fieldSetting in umbracoform.FieldSettings)
                         {
                             var field = form.AllFields.Where(x => x.Id == fieldSetting.Key).FirstOrDefault();
                             if (field != null)
-                                field.Settings = ReplaceSettings(field.Settings, fieldSetting.Value);
+                                field.Settings = ReplaceSettings(field.Settings, fieldSetting.Value) as Dictionary<string,string>;
                         }
+
+                        
                         fs.UpdateForm(form);
                     }
                 }
@@ -154,6 +160,12 @@ namespace Umbraco.Courier.FormsProvider
             var formPath = Umbraco.Forms.Core.Configuration.ContourFolder + "/data/forms/" + id.Id + ".json";
             item.Resources.Add(formPath);
 
+            //handle submit to node id
+            if (form.GoToPageOnSubmit > 0)
+            {
+                item.GoToPageOnSubmitId = ExecutionContext.DatabasePersistence.GetUniqueId(form.GoToPageOnSubmit);
+                item.Dependencies.Add(item.GoToPageOnSubmitId.ToString(), ItemProviders.ProviderIDCollection.documentItemProviderGuid);
+            }
             //Parse field settings and field prevalue source settings
             foreach (var field in form.AllFields)
             {
@@ -161,12 +173,11 @@ namespace Umbraco.Courier.FormsProvider
                 if (parsed.Count > 0)
                     item.FieldSettings.Add(field.Id, parsed);
 
-                if (field.PreValueSourceId != Guid.Empty)
+                if (field.PreValueSourceId != Guid.Empty && !item.PrevalueSourceSettings.ContainsKey(field.PreValueSourceId))
                 {
                     var prvParsed = ParseSettings(field.PreValueSource.Type.Settings(), field.PreValueSource.Settings, item);
-                    
                     if (prvParsed.Count > 0)
-                        item.PrevalueSourceSettings.Add(field.PreValueSourceId, prvParsed);
+                        item.PrevalueSourceSettings.Add(field.PreValueSourceId , prvParsed);
 
                     item.Resources.Add(Umbraco.Forms.Core.Configuration.ContourFolder + "/data/prevalueSources/" + field.PreValueSourceId + ".json");
                 }
@@ -209,6 +220,8 @@ namespace Umbraco.Courier.FormsProvider
                         if (workflow != null)
                         {
                             var wfParsed = ParseSettings(workflow.Type.Settings(), workflow.Settings, item);
+                            if(wfParsed.Count > 0)
+                                item.WorkflowSettings.Add(wfId, wfParsed);
 
                             //add file to item 
                             item.Resources.Add(Umbraco.Forms.Core.Configuration.ContourFolder + "/data/workflows/" + wfId.ToString() + ".json");
@@ -235,7 +248,7 @@ namespace Umbraco.Courier.FormsProvider
                         if (string.IsNullOrEmpty(settingValue) == false)
                         {
                             //if the settings view is a node picker of some sort
-                            if (setting.Value.view.StartsWith("pickers."))
+                            if (setting.Value.view.ToLower().StartsWith("pickers."))
                             {
                                 int id = 0;
                                 if (int.TryParse(settingValue, out id))
@@ -248,7 +261,7 @@ namespace Umbraco.Courier.FormsProvider
                                         var nodeObjectType = tuple.Item2;
                                         var itemProvider = Umbraco.Courier.ItemProviders.NodeObjectTypes.GetCourierProviderFromNodeObjectType(nodeObjectType);
                                         settingsMap[setting.Key] = itemGuid;
-                                        
+
                                         if (itemProvider.HasValue)
                                             item.Dependencies.Add(itemGuid, itemProvider.Value);
                                     }
@@ -276,7 +289,7 @@ namespace Umbraco.Courier.FormsProvider
                     if (Guid.TryParse(replacementSetting.Value, out guid))
                     {
                         var id = ExecutionContext.DatabasePersistence.GetNodeId(guid);
-                        if (id > null)
+                        if (id > 0)
                             current[replacementSetting.Key] = id.ToString();
                     }
                 }
