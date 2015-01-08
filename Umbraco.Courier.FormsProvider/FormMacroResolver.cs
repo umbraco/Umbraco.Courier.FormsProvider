@@ -57,7 +57,7 @@ namespace Umbraco.Courier.FormsProvider
                 {
                     Dependency formDep = new Dependency();
                     formDep.ItemId = new ItemIdentifier(guid.ToString(), Constants.ProviderId);
-                    formDep.Name = "Form from form picker";
+                    formDep.Name = "Form from macro";
 
                     item.Dependencies.Add(formDep);
                 }

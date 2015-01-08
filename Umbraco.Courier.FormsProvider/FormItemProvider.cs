@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Courier.Core;
+using Umbraco.Courier.ItemProviders;
 
 namespace Umbraco.Courier.FormsProvider
 {
@@ -250,20 +251,26 @@ namespace Umbraco.Courier.FormsProvider
                             //if the settings view is a node picker of some sort
                             if (setting.Value.view.ToLower().StartsWith("pickers."))
                             {
-                                int id = 0;
-                                if (int.TryParse(settingValue, out id))
+                                //if its a doctype, no conversion needed, just tell it to include the type as a dependency
+                                if (setting.Value.view.ToLower() == "pickers.documenttype")
                                 {
-                                    var tuple = ExecutionContext.DatabasePersistence.GetUniqueIdWithType(id);
-                                    if (tuple != null)
+                                    item.Dependencies.Add(settingValue, ProviderIDCollection.documentTypeItemProviderGuid);
+                                }else{
+                                    int id = 0;
+                                    if (int.TryParse(settingValue, out id))
                                     {
-                                        //guid
-                                        var itemGuid = tuple.Item1.ToString();
-                                        var nodeObjectType = tuple.Item2;
-                                        var itemProvider = Umbraco.Courier.ItemProviders.NodeObjectTypes.GetCourierProviderFromNodeObjectType(nodeObjectType);
-                                        settingsMap[setting.Key] = itemGuid;
+                                        var tuple = ExecutionContext.DatabasePersistence.GetUniqueIdWithType(id);
+                                        if (tuple != null)
+                                        {
+                                            //guid
+                                            var itemGuid = tuple.Item1.ToString();
+                                            var nodeObjectType = tuple.Item2;
+                                            var itemProvider = Umbraco.Courier.ItemProviders.NodeObjectTypes.GetCourierProviderFromNodeObjectType(nodeObjectType);
+                                            settingsMap[setting.Key] = itemGuid;
 
-                                        if (itemProvider.HasValue)
-                                            item.Dependencies.Add(itemGuid, itemProvider.Value);
+                                            if (itemProvider.HasValue)
+                                                item.Dependencies.Add(itemGuid, itemProvider.Value);
+                                        }
                                     }
                                 }
                             }
