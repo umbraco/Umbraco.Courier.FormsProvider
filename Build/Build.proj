@@ -1,0 +1,15 @@
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <BuildConfiguration>Release</BuildConfiguration>
+    <BuildFolder>Output\</BuildFolder>
+	<BuildFolderAbsolutePath>$(MSBuildProjectDirectory)\$(BuildFolder)</BuildFolderAbsolutePath>
+  </PropertyGroup>
+
+  <Target Name="Build">
+
+    <MSBuild Projects="..\Umbraco.Courier.FormsProvider.sln" Properties="WarningLevel=0;Configuration=$(BuildConfiguration);OutDir=$(BuildFolderAbsolutePath);" Targets="Clean;Rebuild;" BuildInParallel="False" ToolsVersion="4.0" UnloadProjectsOnCompletion="False">
+    </MSBuild>
+	
+  </Target>
+</Project>
