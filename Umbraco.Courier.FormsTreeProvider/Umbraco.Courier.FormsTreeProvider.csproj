@@ -11,6 +11,8 @@
     <AssemblyName>Umbraco.Courier.FormsTreeProvider</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,6 +32,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime">
+      <HintPath>..\packages\Courier.Core.2.50.1\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Courier.Core.2.50.1\lib\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\packages\Courier.Core.2.50.1\lib\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\packages\Courier.Core.2.50.1\lib\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\packages\Courier.Core.2.50.1\lib\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate.ByteCode.Castle">
+      <HintPath>..\packages\Courier.Core.2.50.1\lib\NHibernate.ByteCode.Castle.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -38,13 +58,31 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Umbraco.Courier.Core">
-      <HintPath>..\Dependencies\Umbraco.Courier.Core.dll</HintPath>
+      <HintPath>..\packages\Courier.Core.2.50.1\lib\Umbraco.Courier.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Umbraco.Courier.DataResolvers">
+      <HintPath>..\packages\Courier.Core.2.50.1\lib\Umbraco.Courier.DataResolvers.dll</HintPath>
+    </Reference>
+    <Reference Include="Umbraco.Courier.EventHandlers.V7">
+      <HintPath>..\packages\Courier.Core.2.50.1\lib\Umbraco.Courier.EventHandlers.V7.dll</HintPath>
+    </Reference>
+    <Reference Include="Umbraco.Courier.Persistence">
+      <HintPath>..\packages\Courier.Core.2.50.1\lib\Umbraco.Courier.Persistence.dll</HintPath>
+    </Reference>
+    <Reference Include="Umbraco.Courier.Persistence.V7.NHibernate">
+      <HintPath>..\packages\Courier.Core.2.50.1\lib\Umbraco.Courier.Persistence.V7.NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="Umbraco.Courier.Providers">
-      <HintPath>..\Dependencies\Umbraco.Courier.Providers.dll</HintPath>
+      <HintPath>..\packages\Courier.Core.2.50.1\lib\Umbraco.Courier.Providers.dll</HintPath>
+    </Reference>
+    <Reference Include="Umbraco.Courier.RepositoryProviders">
+      <HintPath>..\packages\Courier.Core.2.50.1\lib\Umbraco.Courier.RepositoryProviders.dll</HintPath>
     </Reference>
     <Reference Include="Umbraco.Courier.UI">
-      <HintPath>..\Dependencies\Umbraco.Courier.UI.dll</HintPath>
+      <HintPath>..\packages\Courier.Core.2.50.1\lib\Umbraco.Courier.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Umbraco.Licensing">
+      <HintPath>..\packages\Courier.Core.2.50.1\lib\Umbraco.Licensing.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -57,7 +95,18 @@
       <Name>Umbraco.Courier.FormsProvider</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
