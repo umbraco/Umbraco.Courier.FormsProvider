@@ -17,9 +17,10 @@ IF [%2] NEQ [] (SET comment=%2) ELSE (IF [%1] NEQ [] (SET "comment="))
 SET version=%release%
 
 IF [%comment%] EQU [] (SET version=%release%) ELSE (SET version=%release%-%comment%)
+
+..\.nuget\nuget.exe restore ..\Umbraco.Courier.FormsProvider.sln
+
 ECHO Building FormsProvider version %version%
-
-
 %windir%\Microsoft.NET\Framework\v4.0.30319\msbuild.exe "Build.proj"
 ..\.nuget\NuGet.exe Pack NuSpecs\Umbraco.Courier.FormsProvider.nuspec -Version %version%
 ..\.nuget\NuGet.exe Pack NuSpecs\Umbraco.Courier.FormsTreeProvider.nuspec -Version %version%
