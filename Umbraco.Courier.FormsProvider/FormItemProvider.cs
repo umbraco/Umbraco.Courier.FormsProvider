@@ -17,7 +17,7 @@ namespace Umbraco.Courier.FormsProvider
             this.Id = Constants.ProviderId;
             this.ExtractionDirectory = "forms";
             this.Index = 20;
-            this.ProviderIcon = "/umbraco/images/umbraco/icon_form.gif";
+            this.ProviderIcon = "/umbraco/plugins/courier/images/icon_form.gif";
         }
 
         public override List<SystemItem> AvailableSystemItems()
