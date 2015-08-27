@@ -46,16 +46,16 @@ namespace Umbraco.Courier.FormsProvider
         {
             var macroTags = Umbraco.Courier.Core.Helpers.Dependencies.ReferencedMacrosInstring(content);
 
-            foreach (var tag in macroTags.Where(x => x.Alias == Constants.FormPickerAlias).ToList())
+            foreach (var tag in macroTags.Where(x => x.Alias == Constants.FormMacroAlias).ToList())
             {
                 Guid guid;
 
                 if (
-                    tag.Attributes.ContainsKey(Constants.FormPickerAttributeAlias) && 
-                    !string.IsNullOrEmpty(tag.Attributes[Constants.FormPickerAttributeAlias]) && 
-                    Guid.TryParse(tag.Attributes[Constants.FormPickerAttributeAlias], out guid))
+                    tag.Attributes.ContainsKey(Constants.FormMacroAttributeAlias) && 
+                    !string.IsNullOrEmpty(tag.Attributes[Constants.FormMacroAttributeAlias]) && 
+                    Guid.TryParse(tag.Attributes[Constants.FormMacroAttributeAlias], out guid))
                 {
-                    Dependency formDep = new Dependency();
+                    var formDep = new Dependency();
                     formDep.ItemId = new ItemIdentifier(guid.ToString(), Constants.ProviderId);
                     formDep.Name = "Form from macro";
 
