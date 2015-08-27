@@ -156,6 +156,7 @@ namespace Umbraco.Courier.FormsProvider
             
             var item = new UmbracoForm();
             item.ItemId = id;
+            item.Name = form.Name;
 
             //Handle forms and fields
             var formPath = Umbraco.Forms.Core.Configuration.ContourFolder + "/data/forms/" + id.Id + ".json";
