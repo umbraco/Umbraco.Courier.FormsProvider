@@ -8,6 +8,6 @@
         <description>Umbraco.Courier.FormsTreeProvider</description>
     </metadata>
     <files>
-        <file src="..\Output\Umbraco.Courier.FormsTreeProvider.dll" target="lib\Umbraco.Courier.FormsTreeProvider" />
+        <file src="..\Output\Umbraco.Courier.FormsTreeProvider.dll" target="lib\Umbraco.Courier.FormsTreeProvider.dll" />
     </files>
 </package>
