@@ -88,7 +88,6 @@ namespace Umbraco.Courier.FormsProvider
                     }
                 }
             }
-            
 
             //migrate datasource settings
             if (umbracoform.DataSourceId != Guid.Empty)
@@ -126,25 +125,32 @@ namespace Umbraco.Courier.FormsProvider
             using (var fs = new Umbraco.Forms.Data.Storage.FormStorage())
             {
                 var form = fs.GetForm(Guid.Parse(umbracoform.ItemId.Id));
-                if (form != null)
-                {
-                    //handle submit to node id
-                    if (umbracoform.GoToPageOnSubmitId != Guid.Empty)
-                        form.GoToPageOnSubmit = ExecutionContext.DatabasePersistence.GetNodeId(umbracoform.GoToPageOnSubmitId);
-           
-                    if (umbracoform.FieldSettings.Count > 0)
-                    {
-                        foreach (var fieldSetting in umbracoform.FieldSettings)
-                        {
-                            var field = form.AllFields.Where(x => x.Id == fieldSetting.Key).FirstOrDefault();
-                            if (field != null)
-                                field.Settings = ReplaceSettings(field.Settings, fieldSetting.Value) as Dictionary<string,string>;
-                        }
+                if (form == null)
+                    return item;
 
-                        
-                        fs.UpdateForm(form);
+                //handle submit to node id
+                var formNeedsSaving = false;
+                if (umbracoform.GoToPageOnSubmitId != Guid.Empty)
+                {
+                    form.GoToPageOnSubmit = ExecutionContext.DatabasePersistence.GetNodeId(umbracoform.GoToPageOnSubmitId);
+                    formNeedsSaving = true;
+                }
+                    
+                if (umbracoform.FieldSettings.Count > 0)
+                {
+                    foreach (var fieldSetting in umbracoform.FieldSettings)
+                    {
+                        var field = form.AllFields.FirstOrDefault(x => x.Id == fieldSetting.Key);
+                        if (field == null)
+                            continue;
+
+                        field.Settings = ReplaceSettings(field.Settings, fieldSetting.Value) as Dictionary<string, string>;
+                        formNeedsSaving = true;
                     }
                 }
+
+                if (formNeedsSaving)
+                    fs.UpdateForm(form);
             }
 
             return item;
