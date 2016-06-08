@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Core;
 using Umbraco.Courier.Core;
 using Umbraco.Courier.ItemProviders;
 
@@ -18,6 +19,9 @@ namespace Umbraco.Courier.FormsProvider
             this.ExtractionDirectory = "forms";
             this.Index = 20;
             this.ProviderIcon = "/umbraco/plugins/courier/images/icon_form.gif";
+
+            // Refresh the Forms Storage cache to make absolutely sure we're not looking in stale data
+            ApplicationContext.Current.ApplicationCache.RuntimeCache.ClearCacheItem("Forms.FormStorage.All");
         }
 
         public override List<SystemItem> AvailableSystemItems()
