@@ -159,7 +159,18 @@ namespace Umbraco.Courier.FormsProvider
         public override Item HandlePack(ItemIdentifier id)
         {
             var fs = new Umbraco.Forms.Data.Storage.FormStorage();
-            var form = fs.GetForm(Guid.Parse(id.Id));
+            Forms.Core.Form form;
+
+            try
+            {
+                // If there is no form on the target disk or cache this method raises a System.NullReferenceException
+                // See https://github.com/umbraco/Umbraco.Courier.FormsProvider/issues/3
+                form = fs.GetForm(Guid.Parse(id.Id));
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
 
             if(form == null)
                 return null;
