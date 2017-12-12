@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Core;
@@ -159,7 +160,20 @@ namespace Umbraco.Courier.FormsProvider
         public override Item HandlePack(ItemIdentifier id)
         {
             var fs = new Umbraco.Forms.Data.Storage.FormStorage();
-            var form = fs.GetForm(Guid.Parse(id.Id));
+            Forms.Core.Form form;
+
+            var formsDataLocation = GetFormsDataLocation();
+
+            try
+            {
+                // If there is no form on the target disk or cache this method raises a System.NullReferenceException
+                // See https://github.com/umbraco/Umbraco.Courier.FormsProvider/issues/3
+                form = fs.GetForm(Guid.Parse(id.Id));
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
 
             if(form == null)
                 return null;
@@ -169,7 +183,7 @@ namespace Umbraco.Courier.FormsProvider
             item.Name = form.Name;
 
             //Handle forms and fields
-            var formPath = Umbraco.Forms.Core.Configuration.ContourFolder + "/data/forms/" + id.Id + ".json";
+            var formPath = formsDataLocation + "/forms/" + id.Id + ".json";
             item.Resources.Add(formPath);
 
             //handle submit to node id
@@ -191,7 +205,7 @@ namespace Umbraco.Courier.FormsProvider
                     if (prvParsed.Count > 0)
                         item.PrevalueSourceSettings.Add(field.PreValueSourceId , prvParsed);
 
-                    item.Resources.Add(Umbraco.Forms.Core.Configuration.ContourFolder + "/data/prevalueSources/" + field.PreValueSourceId + ".json");
+                    item.Resources.Add(formsDataLocation + "/prevalueSources/" + field.PreValueSourceId + ".json");
                 }
             }
 
@@ -213,7 +227,7 @@ namespace Umbraco.Courier.FormsProvider
                             item.DataSourceSettings = dsParsed;
 
                         //add as file to item
-                        item.Resources.Add(Umbraco.Forms.Core.Configuration.ContourFolder + "/data/datasources/" + form.DataSource.Id.ToString() + ".json");
+                        item.Resources.Add(formsDataLocation + "/datasources/" + form.DataSource.Id.ToString() + ".json");
                     }
                     
                 }
@@ -236,7 +250,7 @@ namespace Umbraco.Courier.FormsProvider
                                 item.WorkflowSettings.Add(wfId, wfParsed);
 
                             //add file to item 
-                            item.Resources.Add(Umbraco.Forms.Core.Configuration.ContourFolder + "/data/workflows/" + wfId.ToString() + ".json");
+                            item.Resources.Add(formsDataLocation + "/workflows/" + wfId.ToString() + ".json");
                         }
                     }    
                 }
@@ -314,6 +328,42 @@ namespace Umbraco.Courier.FormsProvider
             }
 
             return current;
+        }
+
+        private string GetFormsDataLocation()
+        {
+            //Forms V4 - stored JSON files at App_Plugins/UmbracoForms/Data
+            //Forms V6 - we have a Forms FileSystem Provider that abstract Files away but the default is at App_Data/UmbracoForms/Data
+
+            //Forms returns a string and not a Version object
+            var formsVersion = Version.Parse(Forms.Core.Configuration.Version);
+            var formsSix = new Version(6,0,0);
+
+            if (formsVersion >= formsSix)
+            {
+                //We will need to do reflection (yuk!)
+                //Forms has the following - Umbraco.Forms.Data.Storage.FormsFileSystem.Instance.IsDefaultFileSystem
+
+                var formsAssembly = Assembly.Load("Umbraco.Forms.Core");
+                Type t = formsAssembly.GetType("Umbraco.Forms.Data.Storage.FormsFileSystem");
+                var instanceProp = t.GetStaticProperty("Instance");
+               
+                var isDefaultFileSystemValue = instanceProp.GetPropertyValue("IsDefaultFileSystem");
+                bool isDefaultFileSystem = isDefaultFileSystemValue is bool && (bool)isDefaultFileSystemValue;
+
+                if (isDefaultFileSystem)
+                {
+                    //We know that in V6 it got moved to App_Data & only if has not be overwritten by a Forms FileSytem Provider
+                    return "~/App_Data/UmbracoForms/Data";
+                }
+
+                //Most likely using Azure File System Provider to store JSON in Blob Storage
+                //Will we support that workflow - as both environments could use share blob storage account?
+                throw new NotSupportedException("We are unable to Courier Forms that are not stored on disk at /App_Data/UmbracoForms/Data");
+            }
+            
+            //It's Forms 4 and was hardcoded to be stored at App_Plugins/UmbracoForms/Data
+            return "~/App_Plugins/UmbracoForms/Data";
         }
 
     }
